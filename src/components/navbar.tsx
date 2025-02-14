@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
+import { ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 import useMobileWindow from "../hooks/use-mobile-window";
@@ -14,6 +14,11 @@ const links = [
     label: "About",
     path: "/about",
   },
+  {
+    label: "Cart",
+    path: "/cart",
+    icon: <ShoppingCart />,
+  },
 ];
 
 export default function Navbar() {
@@ -25,7 +30,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex justify-between items-center py-8 px-12 text-xl">
+    <nav className="flex justify-between items-center py-8 px-12 text-xl font-nav md:text-2xl">
       <Link to={"/"} className="font-bold">
         {"Storez & Co."}
       </Link>
@@ -35,7 +40,7 @@ export default function Navbar() {
             {isMobileNavOpen ? (
               <motion.div
                 key="drawer"
-                className="fixed top-0 left-0 w-full h-full bg-yellow-500 p-8"
+                className="fixed top-0 left-0 w-full h-full bg-gray-200 p-8"
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
@@ -49,12 +54,20 @@ export default function Navbar() {
                     <X />
                   </button>
                 </div>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 w-fit">
                   {links.map((link) => (
-                    <Link key={link.path} to={link.path}>
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      onClick={() => setIsMobileNavOpen(false)}
+                    >
                       {link.label}
                     </Link>
                   ))}
+                  <button className="bg-black flex items-center gap-2 text-white px-4 py-2 rounded-md mb-6 cursor-pointer hover:bg-gray-800 transition-colors md:text-xl lg:text-2xl w-fit">
+                    <ShoppingCart />
+                    Cart
+                  </button>
                 </div>
               </motion.div>
             ) : (
@@ -62,10 +75,13 @@ export default function Navbar() {
             )}
           </AnimatePresence>
         ) : (
-          <div className="flex gap-8">
+          <div className="flex gap-10">
             {links.map((link) => (
               <Link key={link.path} to={link.path}>
-                {link.label}
+                <div className="flex items-center gap-2">
+                  {link.icon && link.icon}
+                  {link.label}
+                </div>
               </Link>
             ))}
           </div>
