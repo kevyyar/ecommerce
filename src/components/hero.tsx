@@ -1,8 +1,8 @@
 export default function Hero() {
   return (
-    <div className="h-screen w-full">
+    <div className="h-full md:h-[850px] w-full p-12 md:p-16 lg:p-24">
       <div className="container mx-auto md:h-3/4 md:flex md:flex-row md:gap-8">
-        <div className="flex flex-col items-center justify-center h-full md:w-1/2 md:items-start">
+        <div className="flex flex-col items-center justify-center text-center h-full md:text-left md:w-1/2 md:items-start">
           <h1 className="text-4xl font-bold md:text-6xl md:leading-tight lg:text-7xl">
             Clothing Essentials
           </h1>
@@ -13,11 +13,12 @@ export default function Hero() {
             Shop Now
           </button>
         </div>
-        <div className="flex flex-col items-center justify-center">
+        <div className="relative w-full h-full overflow-hidden rounded-lg">
           <img
-            src="https://placehold.co/600x400"
+            src="https://picsum.photos/id/1040/1200/800"
             alt="hero"
-            className="w-full h-full"
+            className="w-full h-full object-cover object-center"
+            loading="eager"
           />
         </div>
       </div>

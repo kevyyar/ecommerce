@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
-import useMobileWindow from "../hooks/use-mobile-window";
+import useMobileWindow from "../../hooks/use-mobile-window";
 import MobileNav from "./mobile-nav";
 
 const links = [
@@ -40,7 +40,7 @@ export default function Navbar() {
             {isMobileNavOpen ? (
               <motion.div
                 key="drawer"
-                className="fixed top-0 left-0 w-full h-full bg-gray-200 p-8"
+                className="fixed top-0 left-0 w-full h-full bg-gray-200 p-8 z-10"
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}

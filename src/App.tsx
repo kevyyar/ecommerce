@@ -1,9 +1,9 @@
-import FeaturedProduct from "./components/featured-product";
 import Hero from "./components/hero";
+import FeaturedProduct from "./components/products/featured-product";
 
 function App() {
   return (
-    <div className="p-8 md:p-16 lg:p-24">
+    <div>
       <Hero />
       <FeaturedProduct />
     </div>
