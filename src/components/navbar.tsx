@@ -30,7 +30,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex justify-between items-center py-8 px-12 text-xl font-nav md:text-2xl">
+    <nav className="bg-secondary flex justify-between items-center py-8 px-12 text-xl font-nav md:text-2xl">
       <Link to={"/"} className="font-bold">
         {"Storez & Co."}
       </Link>

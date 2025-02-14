@@ -6,8 +6,14 @@
 @theme {
   --font-nav: "Syne", sans-serif;
   --font-body: "Space Grotesk", sans-serif;
+  --color-main: oklch(0.928 0.006 264.531);
+  --color-secondary: #fff;
 }
 
 body {
+  background-color: var(--color-main);
   font-family: var(--font-body);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
