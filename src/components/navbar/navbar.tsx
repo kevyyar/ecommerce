@@ -3,6 +3,7 @@ import { ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 import useMobileWindow from "../../hooks/use-mobile-window";
+import useStore from "../../store/store";
 import MobileNav from "./mobile-nav";
 
 const links = [
@@ -24,6 +25,7 @@ const links = [
 export default function Navbar() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const isMobile = useMobileWindow();
+  const cart = useStore((state) => state.cart);
 
   const handleMenuOpen = () => {
     setIsMobileNavOpen(!isMobileNavOpen);
@@ -67,6 +69,7 @@ export default function Navbar() {
                   <button className="bg-black flex items-center gap-2 text-white px-4 py-2 rounded-md mb-6 cursor-pointer hover:bg-gray-800 transition-colors md:text-xl lg:text-2xl w-fit">
                     <ShoppingCart />
                     Cart
+                    <span className="text-white">({cart.length})</span>
                   </button>
                 </div>
               </motion.div>
@@ -79,8 +82,13 @@ export default function Navbar() {
             {links.map((link) => (
               <Link key={link.path} to={link.path}>
                 <div className="flex items-center gap-2">
-                  {link.icon && link.icon}
-                  {link.label}
+                  {link.icon && (
+                    <>
+                      {link.icon}
+                      <span>({cart.length})</span>
+                    </>
+                  )}
+                  {!link.icon && link.label}
                 </div>
               </Link>
             ))}

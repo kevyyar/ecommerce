@@ -1,27 +1,34 @@
+import { PlusCircle } from "lucide-react";
 import { products } from "../../data/products";
+import useStore from "../../store/store";
 
 export default function ProductCard() {
+  const addToCart = useStore((state) => state.addToCart);
   return (
     <>
       {products.map((product) => (
         <article
           key={product.id}
-          className="group relative h-96 overflow-hidden rounded-lg shadow-lg"
+          className="group relative overflow-hidden rounded-lg shadow-lg"
         >
-          <img
-            src={product.image}
-            alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-          />
-          <div className="absolute inset-0 bg-black/50 transition-opacity duration-300 group-hover:bg-black/30" />
-          <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="text-white text-center">
-              <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
-              <p className="text-xl mb-4">${product.price.toFixed(2)}</p>
-              <button className="bg-white text-black px-4 py-2 rounded-md mb-6 cursor-pointer hover:bg-gray-200 transition-colors md:text-xl lg:text-2xl">
-                Add to cart
+          <div className="relative h-96">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute right-4 top-4 opacity-100 transition-all duration-300 md:opacity-0 md:group-hover:opacity-100">
+              <button
+                className="rounded-full bg-white p-2 shadow-lg cursor-pointer hover:bg-gray-100"
+                onClick={() => addToCart(product)}
+              >
+                <PlusCircle className="h-6 w-6" />
               </button>
             </div>
+          </div>
+          <div className="p-4">
+            <h2 className="text-lg font-bold">{product.name}</h2>
+            <p className="mt-1 text-lg">${product.price.toFixed(2)}</p>
           </div>
         </article>
       ))}
