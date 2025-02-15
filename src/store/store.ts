@@ -40,11 +40,15 @@ const useStore = create<Store>((set) => ({
     })),
   clearCart: () => set({ cart: [] }),
   updateQuantity: (productId: number, quantity: number) =>
-    set((state) => ({
-      cart: state.cart.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      ),
-    })),
+    set((state) => {
+      if (quantity < 0) return state;
+
+      return {
+        cart: state.cart.map((item) =>
+          item.product.id === productId ? { ...item, quantity } : item
+        ),
+      };
+    }),
 }));
 
 export default useStore;

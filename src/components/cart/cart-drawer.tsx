@@ -47,10 +47,15 @@ export default function CartDrawer({ onClose }: CartDrawerProps) {
                     <Plus size={14} />
                   </button>
                   <button
-                    className="p-1 bg-black text-white rounded-md cursor-pointer hover:bg-gray-800 transition-colors"
+                    className={`p-1 ${
+                      item.quantity <= 0
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-black cursor-pointer hover:bg-gray-800"
+                    } text-white rounded-md transition-colors`}
                     onClick={() =>
                       updateQuantity(item.product.id, item.quantity - 1)
                     }
+                    disabled={item.quantity <= 0}
                   >
                     <Minus size={14} />
                   </button>
