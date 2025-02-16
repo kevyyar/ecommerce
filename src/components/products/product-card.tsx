@@ -1,9 +1,18 @@
 import { PlusCircle } from "lucide-react";
-import { products } from "../../data/products";
-import useStore from "../../store/store";
+import { useEffect } from "react";
+import useStore from "../../store/cart-store";
+import useProductStore from "../../store/products-store";
 
 export default function ProductCard() {
   const addToCart = useStore((state) => state.addToCart);
+  const { products, getAllProducts, isLoading } = useProductStore();
+
+  useEffect(() => {
+    getAllProducts();
+  }, [getAllProducts]);
+
+  if (isLoading) return <p>Loading products...</p>;
+
   return (
     <>
       {products.map((product) => (
@@ -13,7 +22,7 @@ export default function ProductCard() {
         >
           <div className="relative h-96">
             <img
-              src={product.image}
+              src={product.imageUrl}
               alt={product.name}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
@@ -28,7 +37,7 @@ export default function ProductCard() {
           </div>
           <div className="p-4">
             <h2 className="text-lg font-bold">{product.name}</h2>
-            <p className="mt-1 text-lg">${product.price.toFixed(2)}</p>
+            <p className="mt-1 text-lg">${product.price}</p>
           </div>
         </article>
       ))}

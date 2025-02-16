@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Product } from "../data/products";
+import { Product } from "./products-store";
 
 interface CartItem {
   product: Product;
@@ -12,7 +12,7 @@ export interface Store {
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
-  updateQuantity: (productId: number, quantity: number) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
 }
 
 const useStore = create<Store>((set) => ({
@@ -48,7 +48,7 @@ const useStore = create<Store>((set) => ({
       };
     }),
   clearCart: () => set({ cart: [], cartItemCount: 0 }),
-  updateQuantity: (productId: number, quantity: number) =>
+  updateQuantity: (productId: string, quantity: number) =>
     set((state) => {
       if (quantity < 0) return state;
 

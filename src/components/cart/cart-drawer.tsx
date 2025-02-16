@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Minus, Plus, X } from "lucide-react";
-import useStore from "../../store/store";
+import useStore from "../../store/cart-store";
 
 type CartDrawerProps = {
   onClose: () => void;
@@ -31,7 +31,7 @@ export default function CartDrawer({ onClose }: CartDrawerProps) {
             .map((item) => (
               <div key={item.product.id} className="flex gap-4 border-b pb-4">
                 <img
-                  src={item.product.image}
+                  src={item.product.imageUrl}
                   alt={item.product.name}
                   className="w-20 h-20 object-cover"
                 />

@@ -3,7 +3,7 @@ import { ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 import useMobileWindow from "../../hooks/use-mobile-window";
-import useStore from "../../store/store";
+import useStore from "../../store/cart-store";
 import CartDrawer from "../cart/cart-drawer";
 import MobileNav from "./mobile-nav";
 
