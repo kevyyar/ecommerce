@@ -9,7 +9,6 @@ type CartDrawerProps = {
 export default function CartDrawer({ onClose }: CartDrawerProps) {
   const cart = useStore((state) => state.cart);
   const updateQuantity = useStore((state) => state.updateQuantity);
-
   return (
     <motion.div
       className="fixed top-0 right-0 w-96 h-full bg-white p-8 shadow-lg z-50"
@@ -26,47 +25,53 @@ export default function CartDrawer({ onClose }: CartDrawerProps) {
       </div>
 
       <div className="flex flex-col gap-4">
-        {cart.map((item) => (
-          <div key={item.product.id} className="flex gap-4 border-b pb-4">
-            <img
-              src={item.product.image}
-              alt={item.product.name}
-              className="w-20 h-20 object-cover"
-            />
-            <div className="flex flex-col">
-              <h3 className="font-medium">{item.product.name}</h3>
-              <p className="text-gray-600 flex gap-2 items-center">
-                Quantity: {item.quantity}
-                <span className="flex gap-2 items-center">
-                  <button
-                    className="p-1 bg-black text-white rounded-md cursor-pointer hover:bg-gray-800 transition-colors"
-                    onClick={() =>
-                      updateQuantity(item.product.id, item.quantity + 1)
-                    }
-                  >
-                    <Plus size={14} />
-                  </button>
-                  <button
-                    className={`p-1 ${
-                      item.quantity <= 0
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-black cursor-pointer hover:bg-gray-800"
-                    } text-white rounded-md transition-colors`}
-                    onClick={() =>
-                      updateQuantity(item.product.id, item.quantity - 1)
-                    }
-                    disabled={item.quantity <= 0}
-                  >
-                    <Minus size={14} />
-                  </button>
-                </span>
-              </p>
-              <p className="font-bold">
-                ${(item.product.price * item.quantity).toFixed(2)}
-              </p>
-            </div>
-          </div>
-        ))}
+        {cart.some((item) => item.quantity > 0) ? (
+          cart
+            .filter((item) => item.quantity > 0)
+            .map((item) => (
+              <div key={item.product.id} className="flex gap-4 border-b pb-4">
+                <img
+                  src={item.product.image}
+                  alt={item.product.name}
+                  className="w-20 h-20 object-cover"
+                />
+                <div className="flex flex-col">
+                  <h3 className="font-medium">{item.product.name}</h3>
+                  <p className="text-gray-600 flex gap-2 items-center">
+                    Quantity: {item.quantity}
+                    <span className="flex gap-2 items-center">
+                      <button
+                        className="p-1 bg-black text-white rounded-md cursor-pointer hover:bg-gray-800 transition-colors"
+                        onClick={() =>
+                          updateQuantity(item.product.id, item.quantity + 1)
+                        }
+                      >
+                        <Plus size={14} />
+                      </button>
+                      <button
+                        className={`p-1 ${
+                          item.quantity <= 0
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-black cursor-pointer hover:bg-gray-800"
+                        } text-white rounded-md transition-colors`}
+                        onClick={() =>
+                          updateQuantity(item.product.id, item.quantity - 1)
+                        }
+                        disabled={item.quantity <= 0}
+                      >
+                        <Minus size={14} />
+                      </button>
+                    </span>
+                  </p>
+                  <p className="font-bold">
+                    ${(item.product.price * item.quantity).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            ))
+        ) : (
+          <p className="text-gray-500 text-center">Your cart is empty</p>
+        )}
       </div>
     </motion.div>
   );

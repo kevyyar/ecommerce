@@ -28,7 +28,7 @@ export default function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const isMobile = useMobileWindow();
-  const cart = useStore((state) => state.cart);
+  const cartItemCount = useStore((state) => state.cartItemCount);
 
   const handleMenuOpen = () => {
     setIsMobileNavOpen(!isMobileNavOpen);
@@ -80,7 +80,7 @@ export default function Navbar() {
                       className="bg-black flex items-center gap-2 text-white px-4 py-2 rounded-md mb-6 cursor-pointer hover:bg-gray-800 transition-colors md:text-xl lg:text-2xl w-fit"
                     >
                       <ShoppingCart />
-                      <span>({cart.length})</span>
+                      <span>({cartItemCount})</span>
                     </button>
                   </div>
                 </motion.div>
@@ -105,7 +105,7 @@ export default function Navbar() {
                     {link.icon && (
                       <>
                         {link.icon}
-                        <span>({cart.length})</span>
+                        <span>({cartItemCount})</span>
                       </>
                     )}
                     {!link.icon && link.label}
