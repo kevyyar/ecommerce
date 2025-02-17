@@ -1,11 +1,11 @@
 import { PlusCircle } from "lucide-react";
 import { useEffect } from "react";
-import useStore from "../../store/cart-store";
+import useCartStore from "../../store/cart-store";
 import useProductStore from "../../store/products-store";
 
 export default function ProductCard() {
-  const addToCart = useStore((state) => state.addToCart);
   const { products, getAllProducts, isLoading } = useProductStore();
+  const { addToCart } = useCartStore();
 
   useEffect(() => {
     getAllProducts();

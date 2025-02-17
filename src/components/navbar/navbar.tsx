@@ -3,7 +3,7 @@ import { ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 import useMobileWindow from "../../hooks/use-mobile-window";
-import useStore from "../../store/cart-store";
+import useCartStore from "../../store/cart-store";
 import CartDrawer from "../cart/cart-drawer";
 import MobileNav from "./mobile-nav";
 
@@ -28,7 +28,7 @@ export default function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const isMobile = useMobileWindow();
-  const cartItemCount = useStore((state) => state.cartItemCount);
+  const { cartItemCount } = useCartStore();
 
   const handleMenuOpen = () => {
     setIsMobileNavOpen(!isMobileNavOpen);

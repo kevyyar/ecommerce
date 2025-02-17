@@ -1,14 +1,16 @@
 import { motion } from "framer-motion";
 import { Minus, Plus, X } from "lucide-react";
-import useStore from "../../store/cart-store";
+import useCartStore from "../../store/cart-store";
 
 type CartDrawerProps = {
   onClose: () => void;
 };
 
 export default function CartDrawer({ onClose }: CartDrawerProps) {
-  const cart = useStore((state) => state.cart);
-  const updateQuantity = useStore((state) => state.updateQuantity);
+  const { cart, updateQuantity } = useCartStore();
+
+  // if (isLoading) return <p>Loading cart...</p>;
+
   return (
     <motion.div
       className="fixed top-0 right-0 w-96 h-full bg-white p-8 shadow-lg z-50"
@@ -64,7 +66,7 @@ export default function CartDrawer({ onClose }: CartDrawerProps) {
                     </span>
                   </p>
                   <p className="font-bold">
-                    ${(item.product.price * item.quantity).toFixed(2)}
+                    ${item.product.price * item.quantity}
                   </p>
                 </div>
               </div>
