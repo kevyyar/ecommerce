@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ShoppingCart, X } from "lucide-react";
+import { ShoppingCart, User, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 import useMobileWindow from "../../hooks/use-mobile-window";
@@ -20,6 +20,11 @@ const links = [
     label: "Cart",
     path: "#",
     icon: <ShoppingCart />,
+  },
+  {
+    label: "Login",
+    path: "/login",
+    icon: <User />,
   },
 ];
 
@@ -61,13 +66,15 @@ export default function Navbar() {
                   </div>
                   <div className="flex flex-col gap-4 w-fit">
                     {links
-                      .filter((link) => link.label !== "Cart")
+                      .filter((link) => !["Cart"].includes(link.label))
                       .map((link) => (
                         <Link
                           key={link.path}
                           to={link.path}
                           onClick={() => setIsMobileNavOpen(false)}
+                          className="flex items-center gap-2"
                         >
+                          {link.icon && link.icon}
                           {link.label}
                         </Link>
                       ))}
@@ -88,7 +95,7 @@ export default function Navbar() {
               )}
             </AnimatePresence>
           ) : (
-            <div className="flex gap-10">
+            <div className="flex items-center gap-10">
               {links.map((link) => (
                 <Link
                   key={link.path}
@@ -104,7 +111,7 @@ export default function Navbar() {
                     {link.icon && (
                       <>
                         {link.icon}
-                        <CartCount />
+                        {link.label === "Cart" && <CartCount />}
                       </>
                     )}
                     {!link.icon && link.label}

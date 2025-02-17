@@ -5,6 +5,7 @@ import App from "./App.tsx";
 import "./index.css";
 import NavLayout from "./layouts/nav-layout.tsx";
 import AboutPage from "./pages/about-page.tsx";
+import LoginPage from "./pages/login-page.tsx";
 
 const root = document.getElementById("root")!;
 
@@ -15,6 +16,7 @@ createRoot(root).render(
         <Route element={<NavLayout />}>
           <Route path="/" element={<App />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
