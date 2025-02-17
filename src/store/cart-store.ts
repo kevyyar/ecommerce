@@ -1,6 +1,7 @@
 import { doc, getDoc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { create } from "zustand";
 import { db } from "../lib/firebase";
+import { GuestCart, initializeGuestCart } from "../lib/guest-utils";
 import { Product } from "./products-store";
 
 interface CartItem {
@@ -11,7 +12,7 @@ interface CartItem {
 export interface Store {
   cart: CartItem[];
   cartItemCount: number;
-  cartId: string;
+  guestCart: GuestCart | null;
   isLoading: boolean;
   addToCart: (product: Product) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
@@ -20,18 +21,21 @@ export interface Store {
   initializeCart: () => Promise<void>;
 }
 
-const CART_ID = "default-cart"; // We'll use a fixed cart ID since we're not using auth
-
 const useStore = create<Store>((set, get) => ({
   cart: [],
   cartItemCount: 0,
-  cartId: CART_ID,
+  guestCart: null,
   isLoading: false,
 
   initializeCart: async () => {
     set({ isLoading: true });
     try {
-      const cartRef = doc(db, "Carts", CART_ID);
+      // Initialize guest cart
+      const guestCart = initializeGuestCart();
+      set({ guestCart });
+
+      // Get cart from Firebase using guest ID
+      const cartRef = doc(db, "Carts", guestCart.guestId);
       const cartSnap = await getDoc(cartRef);
 
       if (cartSnap.exists()) {
@@ -41,7 +45,13 @@ const useStore = create<Store>((set, get) => ({
           cartItemCount: getCartItemCount(data.items || []),
         });
       } else {
-        await setDoc(cartRef, { items: [], updatedAt: Timestamp.now() });
+        // Create new cart document for guest
+        await setDoc(cartRef, {
+          items: [],
+          updatedAt: Timestamp.now(),
+          guestId: guestCart.guestId,
+          createdAt: Timestamp.fromDate(guestCart.createdAt),
+        });
       }
     } finally {
       set({ isLoading: false });
@@ -52,6 +62,8 @@ const useStore = create<Store>((set, get) => ({
     set({ isLoading: true });
     try {
       const state = get();
+      if (!state.guestCart) throw new Error("Guest cart not initialized");
+
       const existingItem = state.cart.find(
         (item) => item.product.id === product.id
       );
@@ -71,10 +83,10 @@ const useStore = create<Store>((set, get) => ({
       });
 
       // Update Firebase
-      const cartRef = doc(db, "Carts", CART_ID);
+      const cartRef = doc(db, "Carts", state.guestCart.guestId);
       await updateDoc(cartRef, {
         items: newCart,
-        updatedAt: new Date(),
+        updatedAt: Timestamp.now(),
       });
     } finally {
       set({ isLoading: false });
@@ -85,6 +97,8 @@ const useStore = create<Store>((set, get) => ({
     set({ isLoading: true });
     try {
       const state = get();
+      if (!state.guestCart) throw new Error("Guest cart not initialized");
+
       const newCart = state.cart.filter(
         (item) => +item.product.id !== +productId
       );
@@ -96,7 +110,7 @@ const useStore = create<Store>((set, get) => ({
       });
 
       // Update Firebase
-      const cartRef = doc(db, "Carts", CART_ID);
+      const cartRef = doc(db, "Carts", state.guestCart.guestId);
       await updateDoc(cartRef, {
         items: newCart,
         updatedAt: Timestamp.now(),
@@ -109,11 +123,14 @@ const useStore = create<Store>((set, get) => ({
   clearCart: async () => {
     set({ isLoading: true });
     try {
+      const state = get();
+      if (!state.guestCart) throw new Error("Guest cart not initialized");
+
       // Update local state
       set({ cart: [], cartItemCount: 0 });
 
       // Update Firebase
-      const cartRef = doc(db, "Carts", CART_ID);
+      const cartRef = doc(db, "Carts", state.guestCart.guestId);
       await updateDoc(cartRef, {
         items: [],
         updatedAt: Timestamp.now(),
@@ -127,6 +144,7 @@ const useStore = create<Store>((set, get) => ({
     set({ isLoading: true });
     try {
       const state = get();
+      if (!state.guestCart) throw new Error("Guest cart not initialized");
       if (quantity < 0) return;
 
       const newCart = state.cart.map((item) =>
@@ -140,7 +158,7 @@ const useStore = create<Store>((set, get) => ({
       });
 
       // Update Firebase
-      const cartRef = doc(db, "Carts", CART_ID);
+      const cartRef = doc(db, "Carts", state.guestCart.guestId);
       await updateDoc(cartRef, {
         items: newCart,
         updatedAt: Timestamp.now(),
