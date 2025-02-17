@@ -12,6 +12,7 @@ export interface Store {
   cart: CartItem[];
   cartItemCount: number;
   cartId: string;
+  isLoading: boolean;
   addToCart: (product: Product) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -25,102 +26,128 @@ const useStore = create<Store>((set, get) => ({
   cart: [],
   cartItemCount: 0,
   cartId: CART_ID,
+  isLoading: false,
 
   initializeCart: async () => {
-    const cartRef = doc(db, "Carts", CART_ID);
-    const cartSnap = await getDoc(cartRef);
+    set({ isLoading: true });
+    try {
+      const cartRef = doc(db, "Carts", CART_ID);
+      const cartSnap = await getDoc(cartRef);
 
-    if (cartSnap.exists()) {
-      const data = cartSnap.data();
-      set({
-        cart: data.items || [],
-        cartItemCount: getCartItemCount(data.items || []),
-      });
-    } else {
-      await setDoc(cartRef, { items: [], updatedAt: Timestamp.now() });
+      if (cartSnap.exists()) {
+        const data = cartSnap.data();
+        set({
+          cart: data.items || [],
+          cartItemCount: getCartItemCount(data.items || []),
+        });
+      } else {
+        await setDoc(cartRef, { items: [], updatedAt: Timestamp.now() });
+      }
+    } finally {
+      set({ isLoading: false });
     }
   },
 
   addToCart: async (product) => {
-    const state = get();
-    const existingItem = state.cart.find(
-      (item) => item.product.id === product.id
-    );
+    set({ isLoading: true });
+    try {
+      const state = get();
+      const existingItem = state.cart.find(
+        (item) => item.product.id === product.id
+      );
 
-    const newCart = existingItem
-      ? state.cart.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      : [...state.cart, { product, quantity: 1 }];
+      const newCart = existingItem
+        ? state.cart.map((item) =>
+            item.product.id === product.id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          )
+        : [...state.cart, { product, quantity: 1 }];
 
-    // Update local state
-    set({
-      cart: newCart,
-      cartItemCount: getCartItemCount(newCart),
-    });
+      // Update local state
+      set({
+        cart: newCart,
+        cartItemCount: getCartItemCount(newCart),
+      });
 
-    // Update Firebase
-    const cartRef = doc(db, "Carts", CART_ID);
-    await updateDoc(cartRef, {
-      items: newCart,
-      updatedAt: new Date(),
-    });
+      // Update Firebase
+      const cartRef = doc(db, "Carts", CART_ID);
+      await updateDoc(cartRef, {
+        items: newCart,
+        updatedAt: new Date(),
+      });
+    } finally {
+      set({ isLoading: false });
+    }
   },
 
   removeFromCart: async (productId) => {
-    const state = get();
-    const newCart = state.cart.filter(
-      (item) => +item.product.id !== +productId
-    );
+    set({ isLoading: true });
+    try {
+      const state = get();
+      const newCart = state.cart.filter(
+        (item) => +item.product.id !== +productId
+      );
 
-    // Update local state
-    set({
-      cart: newCart,
-      cartItemCount: getCartItemCount(newCart),
-    });
+      // Update local state
+      set({
+        cart: newCart,
+        cartItemCount: getCartItemCount(newCart),
+      });
 
-    // Update Firebase
-    const cartRef = doc(db, "Carts", CART_ID);
-    await updateDoc(cartRef, {
-      items: newCart,
-      updatedAt: Timestamp.now(),
-    });
+      // Update Firebase
+      const cartRef = doc(db, "Carts", CART_ID);
+      await updateDoc(cartRef, {
+        items: newCart,
+        updatedAt: Timestamp.now(),
+      });
+    } finally {
+      set({ isLoading: false });
+    }
   },
 
   clearCart: async () => {
-    // Update local state
-    set({ cart: [], cartItemCount: 0 });
+    set({ isLoading: true });
+    try {
+      // Update local state
+      set({ cart: [], cartItemCount: 0 });
 
-    // Update Firebase
-    const cartRef = doc(db, "Carts", CART_ID);
-    await updateDoc(cartRef, {
-      items: [],
-      updatedAt: Timestamp.now(),
-    });
+      // Update Firebase
+      const cartRef = doc(db, "Carts", CART_ID);
+      await updateDoc(cartRef, {
+        items: [],
+        updatedAt: Timestamp.now(),
+      });
+    } finally {
+      set({ isLoading: false });
+    }
   },
 
   updateQuantity: async (productId: string, quantity: number) => {
-    const state = get();
-    if (quantity < 0) return;
+    set({ isLoading: true });
+    try {
+      const state = get();
+      if (quantity < 0) return;
 
-    const newCart = state.cart.map((item) =>
-      item.product.id === productId ? { ...item, quantity } : item
-    );
+      const newCart = state.cart.map((item) =>
+        item.product.id === productId ? { ...item, quantity } : item
+      );
 
-    // Update local state
-    set({
-      cart: newCart,
-      cartItemCount: getCartItemCount(newCart),
-    });
+      // Update local state
+      set({
+        cart: newCart,
+        cartItemCount: getCartItemCount(newCart),
+      });
 
-    // Update Firebase
-    const cartRef = doc(db, "Carts", CART_ID);
-    await updateDoc(cartRef, {
-      items: newCart,
-      updatedAt: Timestamp.now(),
-    });
+      // Update Firebase
+      const cartRef = doc(db, "Carts", CART_ID);
+      await updateDoc(cartRef, {
+        items: newCart,
+        updatedAt: Timestamp.now(),
+      });
+    } finally {
+      set({ isLoading: false });
+    }
   },
 }));
 
